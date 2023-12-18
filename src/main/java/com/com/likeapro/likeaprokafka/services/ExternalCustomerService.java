@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -21,8 +22,7 @@ public class ExternalCustomerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void send(String topic, InternalCustomer internalCustomer) {
-        var future = kafkaTemplate.send(topic, String.valueOf(internalCustomer.getId()),
-                internalCustomer.customerToString());
+        var future = kafkaTemplate.send(topic, UUID.randomUUID().toString(), internalCustomer.customerToString());
 
         future.whenComplete((sendResult, exception) -> {
             if (exception != null) {
@@ -31,7 +31,7 @@ public class ExternalCustomerService {
             } else {
                 future.complete(sendResult);
                 log.info("External customer sent to the topic " + topic + " to Kafka " +
-                        internalCustomer.customerToString());
+                        internalCustomer.customerToString() + ".");
             }
         });
     }
@@ -41,12 +41,12 @@ public class ExternalCustomerService {
         for(InternalCustomer internalCustomer : internalCustomers) {
             send(topic, internalCustomer);
         }
-        return "There was sent " + internalCustomers.size() + " customers form AWS SQS to Kafka";
+        return "There was sent " + internalCustomers.size() + " customers form AWS SQS to Kafka.";
     }
 
     private List<InternalCustomer> transformProductFromAwsSqsToInternalCustomer(List<Message> messages) {
         List<InternalCustomer> customers = new LinkedList<>();
-        for(Message message: messages){
+        for(Message message: messages) {
             Map<String, MessageAttributeValue> messageAttributes = message.getMessageAttributes();
             CustomerSqs customerSqs = new CustomerSqs(messageAttributes);
             customers.add(customerSqs);

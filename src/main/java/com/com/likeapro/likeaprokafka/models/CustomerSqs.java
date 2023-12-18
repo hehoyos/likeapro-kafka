@@ -2,15 +2,9 @@ package com.com.likeapro.likeaprokafka.models;
 
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 public record CustomerSqs(Map<String, MessageAttributeValue> messageAttributes) implements InternalCustomer {
-
-    @Override
-    public Long getId() {
-        return Long.valueOf(this.messageAttributes.get("id").getStringValue());
-    }
 
     @Override
     public String getName() {
@@ -43,27 +37,14 @@ public record CustomerSqs(Map<String, MessageAttributeValue> messageAttributes) 
     }
 
     @Override
-    public LocalDateTime getCreatedAt() {
-        return LocalDateTime.parse(this.messageAttributes.get("createdAt").getStringValue());
-    }
-
-    @Override
-    public LocalDateTime getUpdatedAt() {
-        return LocalDateTime.parse(this.messageAttributes.get("updatedAt").getStringValue());
-    }
-
-    @Override
     public String customerToString() {
         return "{" +
-                "'id':" + this.getId() +
-                ", 'name':'" + this.getName() + '\'' +
-                ", 'email':'" + this.getEmail() + '\'' +
-                ", 'password':'" + this.getPassword() + '\'' +
-                ", 'phone':'" + this.getPhone() + '\'' +
-                ", 'role':'" + this.getRole() + '\'' +
-                ", 'status':" + this.getStatus() +
-                ", 'createdAt':'" + this.getCreatedAt() + '\'' +
-                ", 'updatedAt':'" + this.getUpdatedAt() + '\'' +
-                '}';
+                "\"name\":\"" + this.getName() + "\"," +
+                "\"email\":\"" + this.getEmail() + "\"," +
+                "\"password\":\"" + this.getPassword() + "\"," +
+                "\"phone\":\"" + this.getPhone() + "\"," +
+                "\"role\":\"" + this.getRole() + "\"," +
+                "\"status\":" + this.getStatus() +
+                "}";
     }
 }

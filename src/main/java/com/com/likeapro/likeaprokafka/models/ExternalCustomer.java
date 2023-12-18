@@ -1,15 +1,7 @@
 package com.com.likeapro.likeaprokafka.models;
 
-import java.time.LocalDateTime;
-
-public record ExternalCustomer(Long id, String name, String email, String password, String phone, String role,
-                               Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt)
+public record ExternalCustomer(String name, String email, String password, String phone, String role, Boolean status)
         implements InternalCustomer {
-
-    @Override
-    public Long getId() {
-        return this.id;
-    }
 
     @Override
     public String getName() {
@@ -42,27 +34,14 @@ public record ExternalCustomer(Long id, String name, String email, String passwo
     }
 
     @Override
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    @Override
-    public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    @Override
     public String customerToString() {
         return "{" +
-                "'id':" + this.getId() +
-                ", 'name':'" + this.getName() + '\'' +
-                ", 'email':'" + this.getEmail() + '\'' +
-                ", 'password':'" + this.getPassword() + '\'' +
-                ", 'phone':'" + this.getPhone() + '\'' +
-                ", 'role':'" + this.getRole() + '\'' +
-                ", 'status':" + this.getStatus() +
-                ", 'createdAt':'" + this.getCreatedAt() + '\'' +
-                ", 'updatedAt':'" + this.getUpdatedAt() + '\'' +
-                '}';
+                "\"name\":\"" + this.getName() + "\"," +
+                "\"email\":\"" + this.getEmail() + "\"," +
+                "\"password\":\"" + this.getPassword() + "\"," +
+                "\"phone\":\"" + this.getPhone() + "\"," +
+                "\"role\":\"" + this.getRole() + "\"," +
+                "\"status\":" + this.getStatus() +
+                "}";
     }
 }
