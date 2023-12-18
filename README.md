@@ -11,3 +11,15 @@ Bancolombia reactive programming course - **Task #3**
 ## Endpoints
 
 ---
+* ### Customer
+  * Send external customer to Kafka: `POST /customer/ext/`
+  * Read customer SQS and send to Kafka: `POST /customer/ext/sqs/`
+* ### Event
+  * Send external event to Kafka: `POST /event/ext/`
+  * Read event SQS and send to Kafka: `POST /event/ext/sqs/`
+* ### Recording
+  * Send external recording to Kafka: `POST /recording/ext/`
+  * Read recording SQS and send to Kafka: `POST /recording/ext/sqs/`
+* ### Statistics
+  * Send external statistics to Kafka: `POST /statistics/ext/`
+  * Read statistics SQS and send to Kafka: `POST /statistics/ext/sqs/`

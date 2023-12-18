@@ -2,7 +2,7 @@ package com.com.likeapro.likeaprokafka.controllers;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.com.likeapro.likeaprokafka.models.ExternalCustomer;
-import com.com.likeapro.likeaprokafka.services.CustomerSqsService;
+import com.com.likeapro.likeaprokafka.services.SqsService;
 import com.com.likeapro.likeaprokafka.services.ExternalCustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ExternalCustomerController {
 
     private ExternalCustomerService externalCustomerService;
-    private CustomerSqsService customerSqsService;
+    private SqsService sqsService;
 
     @PostMapping("/")
     public ExternalCustomer sendExternalCustomerToKafka(@RequestBody ExternalCustomer externalCustomer) {
@@ -29,7 +29,7 @@ public class ExternalCustomerController {
 
     @GetMapping("/sqs")
     public String sendAwsSqsListMessagesToKafka() {
-        List<Message> awsSqsMessages = customerSqsService.receiveMessagesFromQueue("likeapro-sqs", 10, 10);
+        List<Message> awsSqsMessages = sqsService.receiveMessagesFromQueue("likeapro-customers-sqs", 10, 10);
         return externalCustomerService.sendAwsSqsMessagesToKafka(awsSqsMessages,
                 String.valueOf(ControllerTopics.CUSTOMERS));
     }

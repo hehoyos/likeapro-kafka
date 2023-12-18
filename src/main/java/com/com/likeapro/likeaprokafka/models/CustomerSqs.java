@@ -4,7 +4,7 @@ import com.amazonaws.services.sqs.model.MessageAttributeValue;
 
 import java.util.Map;
 
-public record CustomerSqs(Map<String, MessageAttributeValue> messageAttributes) implements InternalCustomer {
+public record CustomerSqs(Map<String, MessageAttributeValue> messageAttributes) implements Customer {
 
     @Override
     public String getName() {

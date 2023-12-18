@@ -2,8 +2,8 @@ package com.com.likeapro.likeaprokafka.services;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
-import com.com.likeapro.likeaprokafka.models.CustomerSqs;
-import com.com.likeapro.likeaprokafka.models.Customer;
+import com.com.likeapro.likeaprokafka.models.EventSqs;
+import com.com.likeapro.likeaprokafka.models.Event;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class ExternalCustomerService {
+public class ExternalEventService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void send(String topic, Customer customer) {
-        var future = kafkaTemplate.send(topic, UUID.randomUUID().toString(), customer.customerToString());
+    public void send(String topic, Event event) {
+        var future = kafkaTemplate.send(topic, UUID.randomUUID().toString(), event.eventToString());
 
         future.whenComplete((sendResult, exception) -> {
             if (exception != null) {
@@ -30,27 +30,27 @@ public class ExternalCustomerService {
                 future.completeExceptionally(exception);
             } else {
                 future.complete(sendResult);
-                log.info("External customer sent to the topic " + topic + " to Kafka " +
-                        customer.customerToString() + ".");
+                log.info("External event sent to the topic " + topic + " to Kafka " +
+                        event.eventToString() + ".");
             }
         });
     }
 
     public String sendAwsSqsMessagesToKafka(List<Message> messages, String topic) {
-        List<Customer> customers = transformProductFromAwsSqsToCustomer(messages);
-        for(Customer customer : customers) {
-            send(topic, customer);
+        List<Event> events = transformProductFromAwsSqsToEvent(messages);
+        for(Event event : events) {
+            send(topic, event);
         }
-        return "There was sent " + customers.size() + " customers form AWS SQS to Kafka.";
+        return "There was sent " + events.size() + " events form AWS SQS to Kafka.";
     }
 
-    private List<Customer> transformProductFromAwsSqsToCustomer(List<Message> messages) {
-        List<Customer> customers = new LinkedList<>();
+    private List<Event> transformProductFromAwsSqsToEvent(List<Message> messages) {
+        List<Event> events = new LinkedList<>();
         for(Message message: messages) {
             Map<String, MessageAttributeValue> messageAttributes = message.getMessageAttributes();
-            CustomerSqs customerSqs = new CustomerSqs(messageAttributes);
-            customers.add(customerSqs);
+            EventSqs eventSqs = new EventSqs(messageAttributes);
+            events.add(eventSqs);
         }
-        return customers;
+        return events;
     }
 }

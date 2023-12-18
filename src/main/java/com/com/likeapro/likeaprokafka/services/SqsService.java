@@ -10,7 +10,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class CustomerSqsService {
+public class SqsService {
 
     private final AmazonSQS sqsClient;
 

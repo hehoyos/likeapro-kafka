@@ -2,8 +2,8 @@ package com.com.likeapro.likeaprokafka.services;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
-import com.com.likeapro.likeaprokafka.models.CustomerSqs;
-import com.com.likeapro.likeaprokafka.models.Customer;
+import com.com.likeapro.likeaprokafka.models.Statistics;
+import com.com.likeapro.likeaprokafka.models.StatisticsSqs;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class ExternalCustomerService {
+public class ExternalStatisticsService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void send(String topic, Customer customer) {
-        var future = kafkaTemplate.send(topic, UUID.randomUUID().toString(), customer.customerToString());
+    public void send(String topic, Statistics statistics) {
+        var future = kafkaTemplate.send(topic, UUID.randomUUID().toString(), statistics.statisticsToString());
 
         future.whenComplete((sendResult, exception) -> {
             if (exception != null) {
@@ -30,27 +30,27 @@ public class ExternalCustomerService {
                 future.completeExceptionally(exception);
             } else {
                 future.complete(sendResult);
-                log.info("External customer sent to the topic " + topic + " to Kafka " +
-                        customer.customerToString() + ".");
+                log.info("External statistics sent to the topic " + topic + " to Kafka " +
+                        statistics.statisticsToString() + ".");
             }
         });
     }
 
     public String sendAwsSqsMessagesToKafka(List<Message> messages, String topic) {
-        List<Customer> customers = transformProductFromAwsSqsToCustomer(messages);
-        for(Customer customer : customers) {
-            send(topic, customer);
+        List<Statistics> statisticsList = transformProductFromAwsSqsToStatistics(messages);
+        for(Statistics statistics : statisticsList) {
+            send(topic, statistics);
         }
-        return "There was sent " + customers.size() + " customers form AWS SQS to Kafka.";
+        return "There was sent " + statisticsList.size() + " statistics form AWS SQS to Kafka.";
     }
 
-    private List<Customer> transformProductFromAwsSqsToCustomer(List<Message> messages) {
-        List<Customer> customers = new LinkedList<>();
+    private List<Statistics> transformProductFromAwsSqsToStatistics(List<Message> messages) {
+        List<Statistics> statisticsList = new LinkedList<>();
         for(Message message: messages) {
             Map<String, MessageAttributeValue> messageAttributes = message.getMessageAttributes();
-            CustomerSqs customerSqs = new CustomerSqs(messageAttributes);
-            customers.add(customerSqs);
+            StatisticsSqs statisticsSqs = new StatisticsSqs(messageAttributes);
+            statisticsList.add(statisticsSqs);
         }
-        return customers;
+        return statisticsList;
     }
 }

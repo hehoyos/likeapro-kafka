@@ -1,6 +1,6 @@
 package com.com.likeapro.likeaprokafka.models;
 
-public interface InternalCustomer {
+public interface Customer {
 
     String getName();
     String getEmail();

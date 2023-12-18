@@ -1,7 +1,7 @@
 package com.com.likeapro.likeaprokafka.models;
 
 public record ExternalCustomer(String name, String email, String password, String phone, String role, Boolean status)
-        implements InternalCustomer {
+        implements Customer {
 
     @Override
     public String getName() {
